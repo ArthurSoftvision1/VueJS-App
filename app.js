@@ -2,9 +2,10 @@ new Vue({
     el: "#app",
     data: {
         currencies: {},
-        amount: 0,
+        amount: null,
         from: 'EUR',
-        to: 'USD'
+        to: 'USD',
+        result: '0'
     },
 
     mounted() {
@@ -14,6 +15,10 @@ new Vue({
     computed: {
         formattedCurrencies() {
             return Object.values(this.currencies)
+        },
+
+        calculateResult () {
+            return (Number(this.amount) * this.result).toFixed(3);
         }
     },
 
@@ -33,6 +38,18 @@ new Vue({
 
                 localStorage.setItem('currencies', JSON.stringify(response.data.results))
             })
+        },
+
+        convertCurrency() {
+
+            const key = `${this.from}_${this.to}`;
+            
+            axios.get(`https://free.currencyconverterapi.com/api/v6/convert?q=${key}`)
+                .then((response) => {
+                    console.log(response);
+
+                    this.results = response.data.results[key].val;
+                })
         }
     }
 })
